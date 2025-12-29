@@ -1,25 +1,53 @@
 # React Frontend
-clinique-front/node_modules
-clinique-front/build
-clinique-front/.env
+clinique-frontend/node_modules  # Correction: frontend pas front
+clinique-frontend/.env.local
+clinique-frontend/.env.development.local
+clinique-frontend/.env.test.local
+clinique-frontend/.env.production.local
+clinique-frontend/npm-debug.log*
+clinique-frontend/yarn-debug.log*
+clinique-frontend/yarn-error.log*
+clinique-frontend/build
+clinique-frontend/dist
 
 # Java Backend (Spring)
-clinique/target
-clinique/.idea
-clinique/.classpath
-clinique/.project
-clinique/.settings
-*.iml
+clinique/target/
+clinique/.gradle/
+clinique/build/
+!clinique/mvnw
+!clinique/mvnw.cmd
+clinique/.idea/
+clinique/*.iml
+clinique/*.iws
+clinique/*.ipr
+*.class
+*.jar
+*.war
+*.ear
+*.log
+
+# Docker
+*.log
+.env
+.docker.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
 
 # Système
 .DS_Store
 Thumbs.db
+desktop.ini
 
 # ========================
-# Uploads (DONNÉES PATIENTS)
+# Uploads (DONNÉES PATIENTS) - IMPORTANT
 # ========================
-uploads/
-uploads/**
+/uploads/
+!/uploads/.gitkeep
 
 # ========================
 # Terraform (CRITIQUE)
@@ -27,3 +55,10 @@ uploads/**
 terraform/.terraform/
 terraform/*.tfstate
 terraform/*.tfstate.backup
+terraform/.terraform.lock.hcl
+terraform/terraform.tfstate*
+terraform/crash.log
+
+# Railway spécifique
+railway.toml.local
+.env.railway

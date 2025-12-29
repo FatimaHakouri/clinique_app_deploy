@@ -1,0 +1,31 @@
+# Build
+FROM maven:3.9.6-eclipse-temurin-21 AS build
+WORKDIR /app
+
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
+
+COPY src ./src
+RUN mvn clean package -DskipTests
+
+# Runtime
+FROM eclipse-temurin:21-jre-alpine
+WORKDIR /app
+
+# Installer wait-for-it pour attendre la DB
+RUN apk add --no-cache bash mysql-client
+ADD https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh /wait-for-it.sh
+RUN chmod +x /wait-for-it.sh
+
+COPY --from=build /app/target/*.jar app.jar
+
+# Créer dossier uploads
+RUN mkdir -p /app/uploads
+
+EXPOSE 8080
+
+# Script de démarrage
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]

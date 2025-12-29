@@ -1,0 +1,78 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root123
+          MYSQL_DATABASE: clinique_db
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost -u root -proot123"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 🔧 Backend : Spring Boot (Java 21)
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('clinique/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Build & Test Backend
+        run: |
+          cd clinique
+          mvn verify -B --file pom.xml
+        env:
+          SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/clinique_db?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false
+
+      # 🔧 Frontend : React (Create React App)
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: clinique-frontend/package-lock.json
+
+      - name: Install & Build Frontend (allow lint warnings)
+        run: |
+          cd clinique-frontend
+          npm ci
+          CI=false npm run build
+
+      # 📦 Artifacts (utiles pour déploiement futur)
+      - name: Upload frontend build
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build
+          path: clinique-frontend/build/
+
+      - name: Upload backend JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-jar
+          path: clinique/target/*.jar

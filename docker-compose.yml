@@ -1,0 +1,63 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: clinique-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: clinique_db
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-prootpassword"]
+      timeout: 30s
+      retries: 10
+    networks:
+      - clinique-network
+
+  backend:
+    build: ./clinique
+    container_name: clinique-backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/clinique_db?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: rootpassword
+    volumes:
+      - ./uploads:/app/uploads
+    networks:
+      - clinique-network
+    command: java -jar app.jar
+
+  frontend:
+    build: ./clinique-frontend
+    container_name: clinique-frontend
+    restart: always
+    ports:
+      - "3000:80"
+    volumes:
+      - ./clinique-frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    environment:
+      REACT_APP_API_URL: http://localhost:8080
+      CHOKIDAR_USEPOLLING: "true"
+    networks:
+      - clinique-network
+    stdin_open: true
+    tty: true
+
+volumes:
+  mysql_data:
+
+networks:
+  clinique-network:
+    driver: bridge

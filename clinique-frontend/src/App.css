@@ -1,0 +1,70 @@
+.app {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f7f9;
+  min-height: 100vh;
+}
+
+.header {
+  background-color: #0a9396;
+  color: white;
+  padding: 20px;
+  text-align: center;
+  border-radius: 0 0 15px 15px;
+}
+
+.infos, .rendezvous {
+  background-color: white;
+  margin: 30px auto;
+  padding: 25px;
+  border-radius: 12px;
+  width: 80%;
+  max-width: 800px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+.clinique-info ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.clinique-info li {
+  margin: 5px 0;
+}
+
+form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+button {
+  padding: 10px 15px;
+  background-color: #0a9396;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #007f82;
+}
+
+ul {
+  padding-left: 20px;
+}
+
+.footer {
+  text-align: center;
+  padding: 15px;
+  color: gray;
+  font-size: 14px;
+}

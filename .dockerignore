@@ -1,0 +1,16 @@
+# Ignorer les dossiers et fichiers inutiles pour le build Docker
+node_modules
+.git
+.gitignore
+README.md
+.env.local
+.env
+coverage
+build
+dist
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+Thumbs.db
